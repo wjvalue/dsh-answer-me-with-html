@@ -1,0 +1,19 @@
+# dsh-answer-me-with-html — bundle patch.
+#
+# One `insert` row mounts a dedicated @deepseek-ai/dsh-skill-filesystem
+# provider whose only root is this package's bundled `skills/` directory, so
+# the skill ships with the plugin instead of being copied into ~/.dsh/skills.
+#
+# The row's `name` is the skill provider, not this package: the package itself
+# carries no Host code, and is read only for this patch and for `skills/`.
+#
+# `bundledSkillDir` is resolved from the installed npm identity anchored at the
+# DSH profile (Loader baseUrl), never as a path concatenated onto baseUrl —
+# a relative path would resolve against whatever cwd the app was launched from.
+- insert:
+    - id: answer-me-with-html-skill
+      name: '@deepseek-ai/dsh-skill-filesystem'
+      config:
+        providerName: answer-me-with-html
+        includeDefaultRoots: false
+        bundledSkillDir: !!js process.getBuiltinModule('node:path').join(process.getBuiltinModule('node:path').dirname(process.getBuiltinModule('node:module').createRequire(baseUrl).resolve('dsh-answer-me-with-html/package.json')), 'skills')

@@ -1,0 +1,36 @@
+{
+  "name": "dsh-answer-me-with-html",
+  "version": "0.4.14",
+  "description": "Answer me with HTML for DeepSeek Harness: an opt-in skill-only bundle that answers hard questions with a one-page HTML. 让 DSH 用一页 HTML 回答复杂问题。",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "skills",
+    "cordis.patch.yml"
+  ],
+  "scripts": {
+    "test": "node test/resolve.test.mjs"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "agent-skill",
+    "html",
+    "explainer",
+    "diagram"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wjvalue/dsh-answer-me-with-html.git"
+  },
+  "homepage": "https://github.com/wjvalue/dsh-answer-me-with-html",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}
