@@ -1,6 +1,6 @@
 {
   "name": "dsh-answer-me-with-html",
-  "version": "0.4.15",
+  "version": "0.5.0",
   "description": "Answer me with HTML for DeepSeek Harness: an opt-in skill-only bundle that answers hard questions with a one-page HTML. 让 DSH 用一页 HTML 回答复杂问题。",
   "type": "module",
   "license": "MIT",

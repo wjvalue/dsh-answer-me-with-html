@@ -12,6 +12,7 @@ diagram coordinates. About 1/8 of the tokens of hand-written HTML.
 |---|---|
 | `cordis.patch.yml` | The only row: a dedicated `@deepseek-ai/dsh-skill-filesystem` provider whose single root is `skills/` |
 | `skills/answer-me-with-html/` | The upstream skill, vendored verbatim — `SKILL.md`, `references/`, and the dependency-free `scripts/am.mjs` CLI |
+| `scripts/update-skill.sh` | Re-vendors the folder above from upstream and checks it (`npm test`) |
 
 There is no Host code. The skill reaches the session catalog through the bundled skill root, so nothing
 is copied into `~/.dsh/skills` and no other profile is affected.
@@ -41,19 +42,39 @@ the `${CLAUDE_SKILL_DIR}` placeholders in `SKILL.md` need no edit.
 
 > **One trap:** if you also enable the default `@deepseek-ai/dsh-skill-filesystem` provider, it scans
 > `~/.dsh/skills` and `~/.agents/skills` at a higher rank than this bundle's root. An older copy of this
-> skill left in either directory then shadows this one. Delete it (`rm -rf ~/.agents/skills/answer-me-with-html`)
-> if both are enabled.
+> skill left in either directory then shadows this one — a stale copy, silently.
+>
+> Before deleting that copy, check what else points at it:
+>
+> ```bash
+> ls -la ~/.dsh/skills ~/.agents/skills ~/.claude/skills 2>/dev/null | grep answer-me-with-html
+> ```
+>
+> `~/.agents/skills/answer-me-with-html` is often the real copy for other agents (Claude Code, ZCode,
+> Hermes and WorkBuddy typically symlink to it), so deleting it breaks those. Either leave the default
+> provider off — it is off unless something enables it — or update the shared copy too instead of
+> removing it.
 
 ## Updating the skill
 
 `skills/answer-me-with-html/` is a verbatim copy of the upstream `skills/answer-me-with-html` folder, so an
-update is a copy, not a merge:
+update is a copy and not a merge:
 
 ```bash
-git clone --depth 1 https://github.com/QingYunA/answer-me-with-html.git /tmp/amwh
-rm -rf skills/answer-me-with-html
-cp -R /tmp/amwh/skills/answer-me-with-html skills/
+scripts/update-skill.sh
 ```
+
+It clones upstream, and if the copy already matches, says so and exits without touching anything.
+Otherwise it re-copies the folder, moves `package.json`'s version to the vendored CLI's version, and runs
+the tests. It prints the upstream commit — put that hash in the commit message, because upstream has
+shipped code changes without a version bump, and the hash is what identifies the vendored state.
+
+> **The CLI's own update hint is wrong here.** After a week `am render` may print
+> `! Update hint: Answer me with HTML <v> is available ... run npx skills update answer-me-with-html -y`.
+> That command belongs to [vercel-labs/skills](https://github.com/vercel-labs/skills) and updates a copy
+> in `~/.agents/skills` — never the copy this plugin serves. It cannot update this plugin; run
+> `scripts/update-skill.sh` in this repository instead. Upstream has no DeepSeek Harness branch for this
+> (checked in 0.5.0), so the hint keeps saying it.
 
 ## License
 

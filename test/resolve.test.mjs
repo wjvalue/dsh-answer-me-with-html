@@ -41,6 +41,13 @@ try {
   assert.match(fm, /^name:\s*answer-me-with-html$/m, 'SKILL.md name must be the kebab-case skill name');
   assert.match(fm, /^description:/m, 'SKILL.md needs a description or the provider skips it');
 
+  // The other thing that goes wrong quietly: re-vendoring the skill without
+  // moving package.json, so the repo claims one version and ships another.
+  const cli = readFileSync(join(dir, 'answer-me-with-html', 'scripts', 'am.mjs'), 'utf8');
+  const vendored = cli.match(/^var VERSION = "([^"]+)";$/m)?.[1];
+  assert.ok(vendored, 'am.mjs has no `var VERSION = "..."` line');
+  assert.equal(manifest.version, vendored, 'package.json version must match the vendored CLI version');
+
   console.log('ok — bundledSkillDir:', dir);
 } finally {
   rmSync(profile, { recursive: true, force: true });
