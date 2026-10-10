@@ -13,17 +13,29 @@ diagram coordinates. About 1/8 of the tokens of hand-written HTML.
 | `cordis.patch.yml` | The only row: a dedicated `@deepseek-ai/dsh-skill-filesystem` provider whose single root is `skills/` |
 | `skills/answer-me-with-html/` | The upstream skill, vendored verbatim — `SKILL.md`, `references/`, and the dependency-free `scripts/am.mjs` CLI |
 | `scripts/update-skill.sh` | Re-vendors the folder above from upstream and checks it (`npm test`) |
+| `scripts/publish-to-npm.sh` | Logs in if needed, then publishes this package to npm |
 
 There is no Host code. The skill reaches the session catalog through the bundled skill root, so nothing
 is copied into `~/.dsh/skills` and no other profile is affected.
 
 ## Install
 
+From npm — no build step, and nothing to authorise:
+
+```bash
+dsh plugin --profile <name> add dsh-answer-me-with-html
+```
+
+Or from a clone, which is how this repository is used for development:
+
 ```bash
 dsh plugin --profile <name> add /path/to/dsh-answer-me-with-html
 ```
 
 Or install it from the plugin market / settings UI by pointing at the same directory.
+
+Installing from the git URL also works, but `dsh plugin add` needs `pnpm` on your `PATH` for that, and
+GitHub's tarball has no build step to run either way.
 
 ## Requirements
 
